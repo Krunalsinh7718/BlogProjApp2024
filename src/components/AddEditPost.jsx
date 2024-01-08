@@ -3,7 +3,6 @@ import Select from "./Select";
 import RTE from "./RTE";
 import Button from "./Button";
 import { useForm } from "react-hook-form";
-import CustSelect from "./CustSelect";
 import Container from "./Container";
 import { useEffect, useState } from "react";
 import service from "../appwrite/OtherService";

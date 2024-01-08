@@ -36,7 +36,7 @@ function Home() {
             {
               !dataLoading ?
                 posts.length > 0 ? posts.map((mapPost) => (
-                  <PostCard {...mapPost} />
+                  <PostCard key={mapPost.$id} {...mapPost} />
                 )) : <div>No post found</div>
               : <DataLoader />
             }
