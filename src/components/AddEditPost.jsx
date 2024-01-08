@@ -1,167 +1,163 @@
-import Container from "./Container";
 import Input from "./Input";
-import RTE from "./RTE";
-import { useForm } from "react-hook-form";
 import Select from "./Select";
-import { ErrorMessage } from "@hookform/error-message";
+import RTE from "./RTE";
 import Button from "./Button";
-import service from "../appwrite/config";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import CustSelect from "./CustSelect";
+import Container from "./Container";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import service from "../appwrite/OtherService";
+import {useSelector} from "react-redux";
+import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom";
+import DataLoader from "./DataLoader";
 
-function  AddEditPost () {
+function AddEditPost({post}) {
+  const [dataLoading, setDataLoading] = useState(false);
+  const navigate = useNavigate();
+  const userDetails = useSelector(state => state.auth.userData);
 
-    const { register, formState: { errors }, handleSubmit, watch, setValue, control, getValues } = useForm();
-    const navigate = useNavigate();
-    const user = useSelector(state => {
-        // console.log(state);
-        return state.auth.userData
-    } );
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    control,
+    getValues,
+    setValue,
+  } = useForm({
+    defaultValues : {
+      title : post?.title || "",
+      slug : post?.$id || "",
+      content : post?.content || "",
+      status : post?.status || "active"
 
-    const {slug} = useParams();
-    const [oldPost, setOldPost] = useState(null);
+    }
+  });
+ 
+  const handleAddEditForm = async (data) => {
+    setDataLoading(true)
+    if(post){
+      try {
+        // const file = data.image[0] ? await service.uploadFile(data.image[0]) : null; 
 
-    useEffect(() => {
-        getPostData();
-    },[slug]);
-
-    const getPostData = async () => {
-        if(slug){
-            const rpost = await service.getPost(slug);
-            // console.log("rpost",rpost);
-            setOldPost(rpost);
-            // console.log("oldPost", rpost);
-            rpost.title ? setValue("title",rpost.title, {shouldValidate: true}) : "";
-            rpost.slug ? setValue("slug",rpost.slug, {shouldValidate: true}) : "";
-            rpost.content ? setValue("content",rpost.content, {shouldValidate: true}) : "";
-            rpost.status ? setValue("title",rpost.title, {shouldValidate: true}) : "";
-
-            if(!rpost){
-
-                toast.error(`error >> Post not found.`);
-                navigate("/");
+        if(data.image[0]){
+          const response = await service.deleteFile(post.articleImageId);
+          if(response){
+            const file = await service.uploadFile(data.image[0]); 
+            if(file) {
+              console.log("updated id :", file.$id);
+              data.articleImageId = file.$id
             }
-              
+          }
+        } 
+
+        const updatedPostData = await service.updatePost( post.$id, data);
+        console.log("updatePostStatus", updatedPostData);
+        if(updatedPostData){
+          toast.success("Post updated successfully");
+          navigate(`/post/${updatedPostData.$id}`);
         }
-    }
-    
-
-    
-
-    const handlePost = async (data) => {
-        try {
-            
-            if(!slug){
-                const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
-
-                if(file){
-                    console.log("file ", file);
-        
-                    const fileId = file.$id;
-                    data.featuredImage = fileId;
-                    const dbPost = await service.CreatePost({...data, userId : user.$id});
-        
-                    if(dbPost){
-                        console.log(dbPost);
-                        toast.success("Post created successfully");
-                        navigate(`/post/${dbPost.$id}`);
-                    }
-                }
-            }else{
-                const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
-
-                if (file) {
-                    service.deleteFile(oldPost.featuredImage);
-                }
-
-                const dbPost = await service.UpdatePost(oldPost.$id, {
-                    ...data,
-                    featuredImage: file ? file.$id : oldPost.featuredImage,
-                });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                }
-    
-            }
-        } catch (error) {
-            toast.error(`error >> handleAddPost : ${error}`);
+        setDataLoading(false);
+      } catch (error) {
+        setDataLoading(false);
+        console.log("Edit post :: handleAddEditForm :: error", error);
+      }
+    }else{
+      try {
+        const file = data.image[0] ? await service.uploadFile(data.image[0]) : null; 
+        console.log(file);
+  
+        if(file){
+          const dbPost = await service.createPost({...data, userId : userDetails.$id, articleImageId : file.$id})
+  
+          if(dbPost){
+            console.log(dbPost);
+            navigate(`/post/${dbPost.$id}`);
+            toast.success("Post created successfully");
+          }
         }
+        setDataLoading(false);
+      } catch (error) {
+        setDataLoading(false);
+        console.log("Add post :: handleAddEditForm :: error", error);
+      }
     }
+  };
 
-    const slugTransform = (val) => {
-        return val
-                .trim()
-                .toLowerCase()
-                .replace(/[^a-zA-Z\d\s]+/g, "-")
-                .replace(/\s/g, "-");
+  const slugTransform = (val) => {
+    return val
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-zA-Z\d\s]+/g, "-")
+      .replace(/\s/g, "-");
+  };
 
-    }
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (name === "title") {
+        setValue("slug", slugTransform(value[name]), { shouldValidate: true });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setValue]);
 
-    useEffect(() => {
-        const subscribe = watch((val, obj) => {
-            // console.log(obj, val);
-            const {name} = obj;
-            if(name === 'title'){
-                setValue("slug",slugTransform(val.title), {shouldValidate: true})
-            }
-        })
+  return (
+    <>
+      <form
+        onSubmit={handleSubmit(handleAddEditForm)}
+        className="flex flex-wrap"
+      >
+        <div className="w-2/3 px-2">
+          <Input
+            label="Title"
+            className="mb-4"
+            {...register("title", { required: "This is required" })}
+          />
+          <Input
+            label="Slug"
+            className="mb-4"
+            {...register("slug", { required: "This is required" })}
+          />
+          <RTE
+            label="Content :"
+            name="content"
+            control={control}
+            className="mb-4"
+            defaultValue={getValues("content")}
+          />
+        </div>
 
-        return () => subscribe.unsubscribe();
-    },[watch, setValue])
-    
-    return (<>
-        <Container>
-        <form onSubmit={handleSubmit(handlePost)} className="flex flex-wrap">
-            <div className="w-2/3 px-2">
-                <Input
-                    label="Title :"
-                    placeholder="Title"
-                    className="mb-4"
-                    {...register("title",  { required: "This is required." })}
-                />
-                <ErrorMessage errors={errors} name="title" />
-                <Input
-                    label="Slug :"
-                    placeholder="Slug"
-                    className="mb-4"
-                    {...register("slug",  { required: "This is required." })}
+        <div className="w-1/3 px-2">
+          {
+            post &&  <img src={service.getFilePreview(post.articleImageId)} alt="Article Image" className="mb-4"/>
+          }
+          <Select
+            label="Status"
+            className="mb-4"
+            options={["active", "inactive"]}
+            {...register("status")}
+          />
+          <Input
+            type="file"
+            label="Article Image"
+            className="mb-4"
+            accept="image/png, image/jpg, image/jpeg, image/gif"
+            {...register("image",{required : post ? true : false})}
+          />
 
-                />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
-            </div>
-            <div className="w-1/3 px-2">
-                <Input
-                    label="Featured Image :"
-                    type="file"
-                    className="mb-4"
-                    accept="image/png, image/jpg, image/jpeg, image/gif"
-                    {...register("image",  { required: !slug })}
-                />
-               { slug && oldPost && (
-                    <div className="w-full mb-4">
-                        <img
-                            src={service.getFilePreview(oldPost?.featuredImage)}
-                            alt={oldPost?.featuredImage}
-                            className="rounded-lg"
-                        />
-                    </div>
-                )}
-                <Select
-                    options={["active", "inactive"]}
-                    label="Status"
-                    className="mb-4"
-                    {...register("status")}
-                />
-                 <Button type="submit"  className="w-full">
-                 {slug ? "Update" : "Submit"}
-                </Button>
-            </div>
-        </form>
-        </Container>
-    </>);
+          <Button 
+          type="submit"  
+          disabled={dataLoading}
+          className="h-14 h-14 inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80">{
+            !dataLoading ?
+              post ? "Update" : "Submit"
+            : <DataLoader button light />
+          }</Button>
+        </div>
+      </form>
+    </>
+  );
 }
 
 export default AddEditPost;

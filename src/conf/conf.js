@@ -1,10 +1,12 @@
+
+
 const conf = {
-    "VITE_APPWRITE_URL": String(import.meta.env.VITE_APPWRITE_URL),
-    "VITE_APPWRITE_PROJECT_ID": String(import.meta.env.VITE_APPWRITE_PROJECT_ID),
-    "VITE_APPWRITE_DATABASE_ID": String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
-    "VITE_APPWRITE_COLLECTION_ID": String(import.meta.env.VITE_APPWRITE_COLLECTION_ID),
-    "VITE_APPWRITE_BUCKET_ID": String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
-    "VITE_TINYMCE_API_KEY" : String(import.meta.env.VITE_TINYMCE_API_KEY),
+    appwriteProjectUrl : String(import.meta.env.VITE_APPWRITE_PROJECT_URL),
+    appwritePorjectId : String(import.meta.env.VITE_APPWRITE_PROJECT_ID),
+    appwriteDatabaseId : String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
+    appwriteCollectionId : String(import.meta.env.VITE_APPWRITE_COLLECTION_ID),
+    appwriteBucketId : String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
+    tinymiceApiKey : String(import.meta.env.VITE_TINYMCE_API_KEY),
 }
 
 export default conf;
