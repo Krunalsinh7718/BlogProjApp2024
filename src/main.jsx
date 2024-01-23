@@ -1,86 +1,81 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM, { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import {
-  AddPost,
-  AllPost,
-  EditPost,
-  Home,
-  Post,
-  SignIn,
-  SignUp,
-} from "./pages/";
-import { AuthLayout, MainPageLayout } from "./components";
-import { Provider } from "react-redux";
-import Store from "./store/store.js";
+import Home from "./components/Home.jsx";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AddEditPost from "./components/AddEditPost.jsx";
+import Login from "./components/Login.jsx";
+import Signup from "./components/Signup.jsx";
+import AllPost from "./components/AllPost.jsx";
+import PageLayout from "./PageLayout.jsx";
+import EditPost from "./components/EditPost.jsx";
+import Post from "./components/Post.jsx";
+import { Provider } from 'react-redux'
+import store from "./store/store.js";
 
 const routes = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <App/>,
     children: [
       {
         path: "",
-        element: <Home />
+        element: <Home />,
       },
       {
-        path: "/all-post",
+        path: "/all-posts",
         element: (
-          <AuthLayout authentication>
-            <AllPost />
-          </AuthLayout>
+        <PageLayout authentication>
+          <AllPost />
+        </PageLayout>
         ),
       },
       {
         path: "/add-post",
         element: (
-          <AuthLayout authentication>
-            <AddPost />
-          </AuthLayout>
+        <PageLayout authentication>
+          <AddEditPost />
+        </PageLayout>
         ),
       },
       {
         path: "/edit-post/:slug",
         element: (
-          <AuthLayout authentication>
-            <EditPost />
-          </AuthLayout>
+        <PageLayout authentication>
+          <AddEditPost />
+        </PageLayout>
         ),
       },
       {
         path: "/post/:slug",
-        element: <Post />
-      },
-      {
-        path: "/signin",
         element: (
-          <AuthLayout authentication={false}>
-            <SignIn />
-          </AuthLayout>
+        <PageLayout authentication>
+          <Post />
+        </PageLayout>
         ),
       },
       {
-        path: "/signup",
-        element: (
-          <AuthLayout authentication={false}>
-            <SignUp />
-          </AuthLayout>
-        ),
-      },
+        path: "/post/:slug",
+        element: <Post />,
+    },
     ],
-  }
-
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Provider store={Store}>
-      <RouterProvider router={routes} />
-      <ToastContainer position="bottom-right" />
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <RouterProvider router={routes} />
+    <ToastContainer position="bottom-right"/>
+  </Provider>
 );

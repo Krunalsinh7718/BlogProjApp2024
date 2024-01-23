@@ -1,16 +1,9 @@
 import Header from "./header/Header";
-import Footer from "./Footer";
-import Container from "./Container";
-import SigninForm from "./SigninForm";
-import SignupForm from "./SignupForm";
-import Input from "./Input";
-import Select from "./Select";
-import AuthLayout from "./AuthLayout";
-import DataLoader from "./DataLoader";
-import MainPageLayout from "./MainPageLayout"
-import AddEditPost from "./AddEditPost"
-import CustSelect from "./CustSelect"
-import Button from "./Button";
+import CreatePost from "./AddEditPost";
+import Home from "./Home";
+import Login from "./Login";
+import Post from "./Post";
 import PostCard from "./PostCard";
+import Signup from "./Signup";
 
-export {Header, Footer, Container, SigninForm, SignupForm, Input, Select, AuthLayout, DataLoader,MainPageLayout,AddEditPost , CustSelect, Button, PostCard}
+export {Header, CreatePost, Home, Login, Post, PostCard, Signup}
