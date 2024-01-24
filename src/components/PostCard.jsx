@@ -1,16 +1,12 @@
 import { Link } from "react-router-dom";
-import service from "../appwrite/config";
-
-function PostCard(props) {
-  console.log("props",props);
-  const {$id, title, featuredImage } = props;
-  return (
-    <>
-    <Link to={`/post/${$id}`}>
+import service from "../appwrite/OtherService";
+function PostCard({$id, articleImageId, title}) {
+    return (<>
+        <Link to={`/post/${$id}`}>
       <div className="w-[300px] rounded-md border">
         <img
-          src={service.getFilePreview(featuredImage)}
-          alt={title}
+          src={service.getFilePreview(articleImageId)}
+          alt="sdf"
           className="h-[200px] w-full rounded-md object-cover"
         />
         <div className="p-4">
@@ -19,11 +15,7 @@ function PostCard(props) {
         </div>
       </div>
     </Link>
-    </>
-  );
+    </>);
 }
 
 export default PostCard;
-{
-  title : "abc"
-}
