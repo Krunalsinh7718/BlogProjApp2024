@@ -45,7 +45,7 @@ function SigninForm() {
 
   return (
     <>
-      <form onSubmit={handleSubmit(handleSignin)}>
+      <form onSubmit={handleSubmit(handleSignin)} autoComplete="off">
         <div className="space-y-5">
           <div>
             <Input
