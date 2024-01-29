@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* BEGIN : auth css */
+@media(max-width: 575px){
+    .auth-page .auth-sections .auth-form{
+        position: absolute;
+        inset: 0;
+        background: #ffffffe8;
+        backdrop-filter: blur(16px);
+        overflow: auto;
+        min-height: min-content;
+        flex-wrap: wrap;
+        height: 100vh;
+    }
+}
+/* END : auth css */
