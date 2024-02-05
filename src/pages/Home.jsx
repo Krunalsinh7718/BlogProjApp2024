@@ -1,49 +1,45 @@
-import { useNavigate } from "react-router-dom";
 import { Container } from "../components";
-import {useState, useEffect} from "react";
-import {Query} from "appwrite";
-import service from "../appwrite/OtherService";
-import {PostCard, DataLoader} from "../components";
+import { useState, useEffect } from "react";
+import { PostCard, DataLoader } from "../components";
+import { useSelector } from "react-redux";
 
 function Home() {
   const [posts, setPosts] = useState([]);
-  const [dataLoading, setDataLoading] = useState(true);
-  const query = [
-      Query.equal('status',"active"),
-      Query.orderDesc("title"),
-      Query.limit(3)
-  ]
+  const storePosts = useSelector((state) => state.db.blogs);
 
   useEffect(() => {
-    setDataLoading(true);
-    service
-      .getAllPost(query)
-      .then((data) => {
-        console.log("All posts", data);
-        if (data) {
-          setPosts(data.documents);
-        }
-      })
-      .catch((error) => console.log(`get all post :: error`, error))
-      .finally(() => setDataLoading(false));
-  }, []);
-  return (
+    if (storePosts) {
+      console.log(" storePosts  ", storePosts);
+      const copyArr = [...storePosts];
+      copyArr.sort(function (a, b) {
+        return new Date(b.$createdAt) - new Date(a.$createdAt);
+      });
+      setPosts(copyArr.slice(0, 3));
+    }
+  }, [storePosts]);
+
+
+  return posts && posts?.length !== 0 ? (
     <>
       <Container>
         <div>
-          <h2>Recent Posts</h2>
+          <h2 className="text-4xl font-bold mb-5">Recent Blogs</h2>
           <div className="flex gap-4 flex-wrap">
-            {
-              !dataLoading ?
-                posts.length > 0 ? posts.map((mapPost) => (
-                  <PostCard key={mapPost.$id} {...mapPost} />
-                )) : <div>No post found</div>
-              : <DataLoader />
-            }
+            {posts.map((mapPost) => (
+              <PostCard key={mapPost.$id} {...mapPost} />
+            ))}
           </div>
         </div>
       </Container>
     </>
+  ) : (
+    <Container>
+      <div className="flex justify-center">
+        <h2 className="p-5 text-center text-2xl font-semibold text-red-600">
+          No post found.
+        </h2>
+      </div>
+    </Container>
   );
 }
 

@@ -1,0 +1,80 @@
+
+  /* BEGIN : button loader */
+  .loader:after, .loader > *, .loader:before, .loader {
+    border-radius: 50%;
+  }
+  
+  .loader:after, .loader > *, .loader:before {
+    content: "";
+    position: absolute;
+    background-color: #fff;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+    top: 50%;
+    text-indent: -10000;
+    transform: translateY(-50%) scale(1);
+    -webkit-animation: grow 1.75s ease-in-out 0.45s infinite;
+            animation: grow 1.75s ease-in-out 0.45s infinite;
+    width: 0.5em;
+    height: 0.5em;
+  }
+  
+  .loader.squares > i, .loader.squares:before, .loader.squares:after, .loader.squares {
+    border-radius: 25%;
+  }
+  
+  .loader.light:before, .loader.light:after, .loader.light i {
+    background-color: #fff;
+  }
+  
+  .loader {
+    display: inline-block;
+    color: inherit;
+    font-size: inherit;
+    margin-left: 0.5em;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0 1.5em;
+    text-indent: -9999em;
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    transform: translateY(0px) scale(1);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .loader:before {
+    left: calc(50% - 1.125em);
+    -webkit-animation-delay: -0.7s;
+            animation-delay: -0.7s;
+  }
+  .loader > * {
+    left: calc(50% - 0.25em);
+    -webkit-animation-delay: -0.35s;
+            animation-delay: -0.35s;
+  }
+  .loader:after {
+    left: calc(50% + 0.625em);
+    -webkit-animation-delay: -0.175s;
+            animation-delay: -0.175s;
+  }
+  
+  @-webkit-keyframes grow {
+    0%, 100% {
+      transform: translateY(-50%) scale(0.5em);
+    }
+    50% {
+      transform: translateY(-50%) scale(0);
+    }
+  }
+  
+  @keyframes grow {
+    0%, 100% {
+      transform: translateY(-50%) scale(0.5em);
+    }
+    50% {
+      transform: translateY(-50%) scale(0);
+    }
+  }
+
+  
+  /* END : button loader */

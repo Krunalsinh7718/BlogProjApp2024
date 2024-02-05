@@ -5,16 +5,19 @@ import Button from "./Button";
 import { useForm } from "react-hook-form";
 import Container from "./Container";
 import { useEffect, useState } from "react";
-import service from "../appwrite/OtherService";
-import {useSelector} from "react-redux";
+import otherservice from "../appwrite/OtherService";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import {useNavigate} from "react-router-dom";
-import DataLoader from "./DataLoader";
+import { useNavigate } from "react-router-dom";
+import BtnLoader from "./BtnLoader";
+import { addBlogs, setBlogs, updatePost } from "../store/dbSlice";
+import { ErrorMessage } from "@hookform/error-message";
 
-function AddEditPost({post}) {
+function AddEditPost({ post }) {
   const [dataLoading, setDataLoading] = useState(false);
   const navigate = useNavigate();
-  const userDetails = useSelector(state => state.auth.userData);
+  const userDetails = useSelector((state) => state.auth.userData);
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -25,35 +28,33 @@ function AddEditPost({post}) {
     getValues,
     setValue,
   } = useForm({
-    defaultValues : {
-      title : post?.title || "",
-      slug : post?.$id || "",
-      content : post?.content || "",
-      status : post?.status || "active"
-
-    }
+    defaultValues: {
+      title: post?.title || "",
+      slug: post?.$id || "",
+      content: post?.content || "",
+      status: post?.status || "active",
+    },
   });
- 
-  const handleAddEditForm = async (data) => {
-    setDataLoading(true)
-    if(post){
-      try {
-        // const file = data.image[0] ? await service.uploadFile(data.image[0]) : null; 
 
-        if(data.image[0]){
-          const response = await service.deleteFile(post.articleImageId);
-          if(response){
-            const file = await service.uploadFile(data.image[0]); 
-            if(file) {
+  const handleAddEditForm = async (data) => {
+    setDataLoading(true);
+    if (post) {
+      try {
+        if (data.image[0]) {
+          const response = await otherservice.deleteFile(post.articleImageId);
+          if (response) {
+            const file = await otherservice.uploadFile(data.image[0]);
+            if (file) {
               console.log("updated id :", file.$id);
-              data.articleImageId = file.$id
+              data.articleImageId = file.$id;
             }
           }
-        } 
+        }
 
-        const updatedPostData = await service.updatePost( post.$id, data);
+        const updatedPostData = await otherservice.updatePost(post.$id, data);
         console.log("updatePostStatus", updatedPostData);
-        if(updatedPostData){
+        if (updatedPostData) {
+          dispatch(updatePost(updatedPostData));
           toast.success("Post updated successfully");
           navigate(`/post/${updatedPostData.$id}`);
         }
@@ -62,16 +63,21 @@ function AddEditPost({post}) {
         setDataLoading(false);
         console.log("Edit post :: handleAddEditForm :: error", error);
       }
-    }else{
+    } else {
       try {
-        const file = data.image[0] ? await service.uploadFile(data.image[0]) : null; 
-        console.log(file);
-  
-        if(file){
-          const dbPost = await service.createPost({...data, userId : userDetails.$id, articleImageId : file.$id})
-  
-          if(dbPost){
-            console.log(dbPost);
+        const file = data.image[0]
+          ? await otherservice.uploadFile(data.image[0])
+          : null;
+
+        if (file) {
+          const dbPost = await otherservice.createPost({
+            ...data,
+            userId: userDetails.$id,
+            articleImageId: file.$id,
+          });
+
+          if (dbPost) {
+            dispatch(addBlogs(dbPost));
             navigate(`/post/${dbPost.$id}`);
             toast.success("Post created successfully");
           }
@@ -103,58 +109,95 @@ function AddEditPost({post}) {
 
   return (
     <>
+    <section>
+      <h2 className="text-4xl font-bold mb-5 ">
+        {post ? "Update Blog" : "Add Blog"}
+      </h2>
       <form
         onSubmit={handleSubmit(handleAddEditForm)}
-        className="flex flex-wrap"
+        
       >
-        <div className="w-2/3 px-2">
-          <Input
-            label="Title"
-            className="mb-4"
-            {...register("title", { required: "This is required" })}
-          />
-          <Input
-            label="Slug"
-            className="mb-4"
-            {...register("slug", { required: "This is required" })}
-          />
-          <RTE
-            label="Content :"
-            name="content"
-            control={control}
-            className="mb-4"
-            defaultValue={getValues("content")}
-          />
-        </div>
-
-        <div className="w-1/3 px-2">
-          {
-            post &&  <img src={service.getFilePreview(post.articleImageId)} alt="Article Image" className="mb-4"/>
-          }
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <Input
+              label="Title"
+              className="mb-4"
+              {...register("title", { required: "This is required" })}
+            />
+            <div className="text-red-600">
+              <ErrorMessage errors={errors} name="title" />
+            </div>
+          </div>
+          <div>
+            <Input
+              label="Slug"
+              className="mb-4"
+              {...register("slug", { required: "This is required" })}
+            />
+            <div className="text-red-600">
+              <ErrorMessage errors={errors} name="slug" />
+            </div>
+          </div>
+          <div>
+            <Input
+              type="file"
+              label="Article Image"
+              className="mb-4"
+              accept="image/png, image/jpg, image/jpeg, image/gif"
+              {...register("image", { required: post ? false : true })}
+            />
+            <div className="text-red-600">
+              <ErrorMessage errors={errors} name="image" />
+            </div>
+          </div>
           <Select
             label="Status"
             className="mb-4"
             options={["active", "inactive"]}
             {...register("status")}
           />
-          <Input
-            type="file"
-            label="Article Image"
-            className="mb-4"
-            accept="image/png, image/jpg, image/jpeg, image/gif"
-            {...register("image",{required : post ? true : false})}
-          />
-
-          <Button 
-          type="submit"  
-          disabled={dataLoading}
-          className="h-14 h-14 inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80">{
-            !dataLoading ?
-              post ? "Update" : "Submit"
-            : <DataLoader button light />
-          }</Button>
+          {post && (
+            <img
+              src={otherservice.getFilePreview(post.articleImageId)}
+              alt="Article Image"
+              className="mb-4"
+            />
+          )}
+          <div className="col-span-2">
+            <RTE
+              label="Content :"
+              name="content"
+              control={control}
+              className="mb-4"
+              defaultValue={getValues("content")}
+            />
+            <div className="text-red-600">
+              <ErrorMessage errors={errors} name="content" />
+            </div>
+          </div>
+          <div>
+            <Button
+              type="submit"
+              className="h-14 h-14 inline-flex items-center justify-center rounded-md bg-black px-6 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 relative"
+              disabled={dataLoading}
+            >
+              <span
+                className={`${
+                  dataLoading ? "invisible " : "visible"
+                } inline-flex items-center`}
+              >
+                {post ? "Update Blog" : "Add Blog"}
+              </span>
+              <BtnLoader
+                className={`${
+                  !dataLoading ? "invisible" : "visible"
+                } absolute inset-0 m-auto`}
+              />
+            </Button>
+          </div>
         </div>
       </form>
+    </section>
     </>
   );
 }

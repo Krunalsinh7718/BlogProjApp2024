@@ -1,40 +1,37 @@
 import { useEffect, useState } from "react";
 import { Container, PostCard, DataLoader } from "../components";
+import { useSelector } from "react-redux";
 
-import service from "../appwrite/OtherService";
+import otherservice from "../appwrite/OtherService";
 
 function AllPost() {
- const [posts, setPosts] = useState([]);
- const [dataLoading, setDataLoading] = useState();
+  const [posts, setPosts] = useState([]);
+  const storePosts = useSelector((state) => state.db.blogs);
 
   useEffect(() => {
-    setDataLoading(true);
-    service
-      .getAllPost()
-      .then((data) => {
-        console.log("All posts", data);
-        if (data) {
-          setPosts(data.documents);
-        }
-      })
-      .catch((error) => console.log(`get all post :: error`, error))
-      .finally(() => setDataLoading(false));
-  }, []);
+    if (storePosts) {
+      setPosts(storePosts);
+    }
+  }, [storePosts]);
 
-  return (
+  return posts && posts?.length !== 0 ? (
     <>
       <Container>
         <div className="flex gap-4 flex-wrap">
-          {
-          !dataLoading ?
-            posts.length > 0 ? 
-              posts.map((mapPost) => <PostCard {...mapPost} />)
-              : <div>No post found</div>
-            : <DataLoader />
-        }
+          {posts.map((mapPost) => (
+            <PostCard {...mapPost} />
+          ))}
         </div>
       </Container>
     </>
+  ) : (
+    <Container>
+      <div className="flex justify-center">
+        <h2 className="p-5 text-center text-2xl font-semibold text-red-600">
+          No post found.
+        </h2>
+      </div>
+    </Container>
   );
 }
 

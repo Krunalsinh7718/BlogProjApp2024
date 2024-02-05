@@ -1,5 +1,6 @@
 import { Container, SigninForm } from "../components";
 import { Link } from "react-router-dom";
+import LazyImage from "../components/LazyImage";
 
 function SignIn() {
     return (<>
@@ -16,17 +17,19 @@ function SignIn() {
                   className="font-semibold text-black transition-all duration-200 hover:underline ml-2"
                   to="/signup"
                 >
-                  Create a free account
+                  Sign Up
                 </Link>
               </p>
             <SigninForm />
             </div>
           </div>
           <div className="h-full w-full auth-img">
-            <img
-              className="mx-auto h-full w-full  object-cover"
+          <LazyImage
               src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80"
-              alt=""
+              alt="Blog Image"
+              className="mx-auto h-full w-full object-cover"
+              width={832}
+              height={554}
             />
           </div>
         </div>

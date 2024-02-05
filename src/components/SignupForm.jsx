@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login } from "../store/authSlice";
 import { useState } from "react";
-import DataLoader from "./DataLoader";
+import BtnLoader from "./BtnLoader";
 
 function SignupForm() {
   const {
@@ -97,31 +97,29 @@ function SignupForm() {
             </div>
         </div>
         <Button
-          type="submit"
-          className="h-14 h-14 inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
-          disabled={dataLoading}
-        >
-          {!dataLoading ? (
-            <>
-              Create Account
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={16}
-                height={16}
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </>
-          ) : (
-            <DataLoader button light />
-          )}
-        </Button>
+            type="submit"
+            className="h-14 h-14 inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 relative"
+            disabled={dataLoading}
+          >
+           
+              <span className={`${dataLoading ? 'invisible ' : 'visible'} inline-flex items-center`}>
+                Create Account
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={16}
+                  height={16}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
+              <BtnLoader className={`${!dataLoading ? 'invisible' : 'visible'} absolute inset-0 m-auto`} />
+          </Button>
         </div>
       </form>
     </>
