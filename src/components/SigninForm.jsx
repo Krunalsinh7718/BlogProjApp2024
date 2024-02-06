@@ -38,6 +38,9 @@ function SigninForm() {
           toast.error("Please enter valid email or password.");
           setDataLoading(false);
         }
+      }else{
+        setDataLoading(false);
+        toast.error("Please enter valid email or password.");
       }
     } catch (error) {
       console.log("error >> signin :", error);
@@ -98,6 +101,7 @@ function SigninForm() {
                 strokeLinejoin="round"
                 strokeWidth={2}
                 viewBox="0 0 24 24"
+                className="ml-2"
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

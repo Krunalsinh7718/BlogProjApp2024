@@ -8,22 +8,22 @@ import { deleteBlog } from "../store/dbSlice";
 import PageLoader from "../components/PageLoader";
 import LazyImage from "../components/LazyImage";
 
-function Post() {
-  const [post, setPost] = useState(null);
+function Blog() {
+  const [blog, setBlog] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
   const param = useParams();
   const navigate = useNavigate();
   const currentUserData = useSelector((state) => state.auth.userData);
   const isAuthor =
-    post && currentUserData ? post.userId === currentUserData.$id : false;
+    blog && currentUserData ? blog.userId === currentUserData.$id : false;
   const dispatch = useDispatch();
 
   useEffect(() => {
     otherservice
-      .getPost(param.slug)
+      .getBlog(param.slug)
       .then((data) => {
         if (data) {
-          setPost(data);
+          setBlog(data);
         } else {
           navigate("/");
         }
@@ -31,34 +31,34 @@ function Post() {
       })
       .catch((error) =>{
         setDataLoading(false);
-        console.log(`get post :: post ${param.slug}:: error`, error)
+        console.log(`get blog :: blog ${param.slug}:: error`, error)
       }
       );
   }, []);
 
-  const handleDeletePost = async () => {
+  const handleDeleteBlog = async () => {
     try {
-      const response = await otherservice.deleteFile(post.articleImageId);
+      const response = await otherservice.deleteFile(blog.articleImageId);
       if (response) {
-        const status = await otherservice.deletePost(post.$id);
+        const status = await otherservice.deleteBlog(blog.$id);
         if (status) {
-          dispatch(deleteBlog(post.$id));
+          dispatch(deleteBlog(blog.$id));
           navigate("/");
         }
       }
     } catch (error) {
-      console.log(`delete post :: post ${param.slug}:: error`, error);
+      console.log(`delete blog :: blog ${param.slug}:: error`, error);
     }
   };
   return !dataLoading ? (
     <>
       <div className="mx-auto  max-w-2xl px-3 pb-4">
-        <h1 className="text-3xl font-bold capitalize mb-5">{post.title}</h1>
+        <h1 className="text-3xl font-bold capitalize mb-5">{blog.title}</h1>
 
         <div className="rounded-lg bg-gray-200 p-4 mx-auto  max-w-2xl relative mb-4">
           <LazyImage
-            src={otherservice.getFilePreview(post.articleImageId)}
-            alt="Post Image"
+            src={otherservice.getFilePreview(blog.articleImageId)}
+            alt="Blog Image"
             className="w-full"
             height={427}
             width={640}
@@ -68,7 +68,7 @@ function Post() {
           <div>
             {isAuthor && (
               <div className="absolute right-10 top-10 flex gap-2">
-                <Link to={`/edit-post/${post.$id}`} className="rounded-full bg-black h-10 w-10 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black grid place-items-center hover:bg-blue-600"
+                <Link to={`/edit-blog/${blog.$id}`} className="rounded-full bg-black h-10 w-10 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black grid place-items-center hover:bg-blue-600"
                 title="Edit">
                   
                     <svg
@@ -88,7 +88,7 @@ function Post() {
                 </svg>
                   
                 </Link>
-                <button  onClick={handleDeletePost} className="rounded-full bg-black h-10 w-10 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black grid place-items-center hover:bg-blue-600"
+                <button  onClick={handleDeleteBlog} className="rounded-full bg-black h-10 w-10 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black grid place-items-center hover:bg-blue-600"
                 title="Delete">
                   <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +107,7 @@ function Post() {
           </div>
         </div>
         <hr className="mb-4"/>
-        <div >{parse(post.content  || "")}</div>
+        <div >{parse(blog.content  || "")}</div>
       </div>
     </>
   ) : (
@@ -115,4 +115,4 @@ function Post() {
   );
 }
 
-export default Post;
+export default Blog;

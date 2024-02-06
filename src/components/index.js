@@ -8,8 +8,8 @@ import Select from "./Select";
 import AuthLayout from "./AuthLayout";
 import DataLoader from "./DataLoader";
 import MainPageLayout from "./MainPageLayout"
-import AddEditPost from "./AddEditPost"
+import AddEditBlog from "./AddEditBlog"
 import Button from "./Button";
-import PostCard from "./PostCard";
+import BlogCard from "./BlogCard";
 
-export {Header, Footer, Container, SigninForm, SignupForm, Input, Select, AuthLayout, DataLoader,MainPageLayout,AddEditPost , Button, PostCard}
+export {Header, Footer, Container, SigninForm, SignupForm, Input, Select, AuthLayout, DataLoader,MainPageLayout,AddEditBlog , Button, BlogCard}

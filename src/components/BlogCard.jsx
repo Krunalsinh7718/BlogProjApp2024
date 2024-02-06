@@ -3,10 +3,10 @@ import otherservice from "../appwrite/OtherService";
 import LazyImage from "./LazyImage";
 import { timeStamptToDDMMYY, timeStamptToDDMMYYHHMM} from "../util/common-functions"
 
-function PostCard({ $id, articleImageId, title, className , $createdAt}) {
+function BlogCard({ $id, articleImageId, title, className , $createdAt}) {
   return (
     <>
-      <Link to={`/post/${$id}`}>
+      <Link to={`/blog/${$id}`}>
         <div
           className={`w-[300px] border shadow rounded-md hover:shadow-lg bg-white overflow-hidden ${className}`}
         >
@@ -27,4 +27,4 @@ function PostCard({ $id, articleImageId, title, className , $createdAt}) {
   );
 }
 
-export default PostCard;
+export default BlogCard;

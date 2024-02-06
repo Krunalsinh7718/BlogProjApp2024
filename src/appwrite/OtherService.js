@@ -17,7 +17,7 @@ export class OtherService {
         this.storage = new Storage(this.client);
     }
 
-    async createPost({ title, slug, content, articleImageId, status, userId }) {
+    async createBlog({ title, slug, content, articleImageId, status, userId }) {
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
@@ -32,14 +32,14 @@ export class OtherService {
                 }
             )
         } catch (error) {
-            console.log("Appwrite other service :: createPost :: error", error);
+            console.log("Appwrite other service :: createBlog :: error", error);
             return false;
         }
     }
 
     
 
-    async getPost(id) {
+    async getBlog(id) {
         try {
             return await this.databases.getDocument(
                 conf.appwriteDatabaseId,
@@ -47,24 +47,24 @@ export class OtherService {
                 id);
 
         } catch (error) {
-            console.log("Appwrite other service :: getPost :: error", error);
+            console.log("Appwrite other service :: getBlog :: error", error);
             return false;
         }
     }
 
-    async deletePost(documentId){
+    async deleteBlog(documentId){
         try {
             return this.databases.deleteDocument(
                 conf.appwriteDatabaseId, 
                 conf.appwriteCollectionId, 
                 documentId);
         } catch (error) {
-            console.log("Appwrite other service :: deletePost :: error", error);
+            console.log("Appwrite other service :: deleteBlog :: error", error);
             return false;
         }
     }
 
-    async updatePost(documentId,{title, content, articleImageId, status}){
+    async updateBlog(documentId,{title, content, articleImageId, status}){
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId, 
@@ -77,19 +77,19 @@ export class OtherService {
                     status
                 });
         } catch (error) {
-            console.log("Appwrite other service :: updatePost :: error", error);
+            console.log("Appwrite other service :: updateBlog :: error", error);
             return false;
         }
     }
 
-    async getAllPost(queries = [Query.equal("status", "active")]){
+    async getAllBlog(queries = [Query.equal("status", "active")]){
         try {
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseId, 
                 conf.appwriteCollectionId,
                 queries);
         } catch (error) {
-            console.log("Appwrite other service :: getAllPost :: error", error);
+            console.log("Appwrite other service :: getAllBlog :: error", error);
             return false;
         }
     }

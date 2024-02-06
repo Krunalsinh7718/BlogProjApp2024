@@ -18,13 +18,13 @@ function Header() {
       allow: true,
     },
     {
-      item: "All Post",
-      slug: "/all-post",
+      item: "All Blog",
+      slug: "/all-blog",
       allow: authStatus,
     },
     {
-      item: "Add Post",
-      slug: "/add-post",
+      item: "Add Blog",
+      slug: "/add-blog",
       allow: authStatus,
     },
   ];

@@ -7,6 +7,7 @@ import { login, logout } from "./store/authSlice";
 import { setBlogs } from "./store/dbSlice";
 import otherservice from "./appwrite/OtherService";
 import PageLoader from './components/PageLoader';
+import { toast } from "react-toastify";
 
 function App(props) {
   const authStatus = useSelector((state) => state.auth.status);
@@ -15,25 +16,25 @@ function App(props) {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const getPosts = async () => {
+  const getBlogs = async () => {
     setPageLoading(true);
     otherservice
-      .getAllPost()
+      .getAllBlog()
       .then((data) => {
-        console.log("All posts", data);
+        console.log("All blogs", data);
         if (data) {
           dispatch(setBlogs(data.documents));
         } else {
-          toast.error("No post found");
+          toast.error("No blog found");
         }
         setPageLoading(false);
       })
-      .catch((error) => console.log(`get all post :: error`, error))
+      .catch((error) => console.log(`get all blog :: error`, error))
       .finally(() => setPageLoading(false));
   };
 
   useEffect(() => {
-    getPosts();
+    getBlogs();
   }, []);
 
   useEffect(() => {

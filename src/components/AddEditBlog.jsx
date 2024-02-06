@@ -10,10 +10,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import BtnLoader from "./BtnLoader";
-import { addBlogs, setBlogs, updatePost } from "../store/dbSlice";
+import { addBlogs, setBlogs, updateBlog } from "../store/dbSlice";
 import { ErrorMessage } from "@hookform/error-message";
 
-function AddEditPost({ post }) {
+function AddEditBlog({ blog }) {
   const [dataLoading, setDataLoading] = useState(false);
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.auth.userData);
@@ -29,19 +29,25 @@ function AddEditPost({ post }) {
     setValue,
   } = useForm({
     defaultValues: {
-      title: post?.title || "",
-      slug: post?.$id || "",
-      content: post?.content || "",
-      status: post?.status || "active",
+      title: blog?.title || "",
+      slug: blog?.$id || "",
+      content: blog?.content || "",
+      status: blog?.status || "active",
     },
   });
 
+  const getUniqueString = () => {
+    const renNum = Math.floor(Math.random() * 2000);
+    const timeStamp = Date.now();
+    return  data.slug + renNum + timeStamp;
+  }
+
   const handleAddEditForm = async (data) => {
     setDataLoading(true);
-    if (post) {
+    if (blog) {
       try {
         if (data.image[0]) {
-          const response = await otherservice.deleteFile(post.articleImageId);
+          const response = await otherservice.deleteFile(blog.articleImageId);
           if (response) {
             const file = await otherservice.uploadFile(data.image[0]);
             if (file) {
@@ -51,17 +57,17 @@ function AddEditPost({ post }) {
           }
         }
 
-        const updatedPostData = await otherservice.updatePost(post.$id, data);
-        console.log("updatePostStatus", updatedPostData);
-        if (updatedPostData) {
-          dispatch(updatePost(updatedPostData));
-          toast.success("Post updated successfully");
-          navigate(`/post/${updatedPostData.$id}`);
+        const updatedBlogData = await otherservice.updateBlog(blog.$id, data);
+        console.log("updateBlogStatus", updatedBlogData);
+        if (updatedBlogData) {
+          dispatch(updateBlog(updatedBlogData));
+          toast.success("Blog updated successfully");
+          navigate(`/blog/${updatedBlogData.$id}`);
         }
         setDataLoading(false);
       } catch (error) {
         setDataLoading(false);
-        console.log("Edit post :: handleAddEditForm :: error", error);
+        console.log("Edit blog :: handleAddEditForm :: error", error);
       }
     } else {
       try {
@@ -70,22 +76,23 @@ function AddEditPost({ post }) {
           : null;
 
         if (file) {
-          const dbPost = await otherservice.createPost({
-            ...data,
+          const updatedData = {...data, slug : (getUniqueString()+'-'+ data.slug).slice(0,35)}
+          const dbBlog = await otherservice.createBlog({
+            ...updatedData,
             userId: userDetails.$id,
             articleImageId: file.$id,
           });
 
-          if (dbPost) {
-            dispatch(addBlogs(dbPost));
-            navigate(`/post/${dbPost.$id}`);
-            toast.success("Post created successfully");
+          if (dbBlog) {
+            dispatch(addBlogs(dbBlog));
+            navigate(`/blog/${dbBlog.$id}`);
+            toast.success("Blog created successfully");
           }
         }
         setDataLoading(false);
       } catch (error) {
         setDataLoading(false);
-        console.log("Add post :: handleAddEditForm :: error", error);
+        console.log("Add blog :: handleAddEditForm :: error", error);
       }
     }
   };
@@ -111,7 +118,7 @@ function AddEditPost({ post }) {
     <>
     <section>
       <h2 className="text-4xl font-bold mb-5 ">
-        {post ? "Update Blog" : "Add Blog"}
+        {blog ? "Update Blog" : "Add Blog"}
       </h2>
       <form
         onSubmit={handleSubmit(handleAddEditForm)}
@@ -121,8 +128,11 @@ function AddEditPost({ post }) {
           <div>
             <Input
               label="Title"
-              className="mb-4"
-              {...register("title", { required: "This is required" })}
+              {...register("title", { required: "This is required" ,
+              maxLength: {
+                value: 100,
+                message: "Maximum length of name is 100.",
+              }, })}
             />
             <div className="text-red-600">
               <ErrorMessage errors={errors} name="title" />
@@ -131,8 +141,10 @@ function AddEditPost({ post }) {
           <div>
             <Input
               label="Slug"
-              className="mb-4"
-              {...register("slug", { required: "This is required" })}
+              {...register("slug", { required: "This is required",  maxLength: {
+                value: 100,
+                message: "Maximum length of name is 100.",
+              }, })}
             />
             <div className="text-red-600">
               <ErrorMessage errors={errors} name="slug" />
@@ -142,9 +154,8 @@ function AddEditPost({ post }) {
             <Input
               type="file"
               label="Article Image"
-              className="mb-4"
               accept="image/png, image/jpg, image/jpeg, image/gif"
-              {...register("image", { required: post ? false : true })}
+              {...register("image", { required: blog ? false : true })}
             />
             <div className="text-red-600">
               <ErrorMessage errors={errors} name="image" />
@@ -152,15 +163,13 @@ function AddEditPost({ post }) {
           </div>
           <Select
             label="Status"
-            className="mb-4"
             options={["active", "inactive"]}
             {...register("status")}
           />
-          {post && (
+          {blog && (
             <img
-              src={otherservice.getFilePreview(post.articleImageId)}
+              src={otherservice.getFilePreview(blog.articleImageId)}
               alt="Article Image"
-              className="mb-4"
             />
           )}
           <div className="col-span-2">
@@ -168,7 +177,6 @@ function AddEditPost({ post }) {
               label="Content :"
               name="content"
               control={control}
-              className="mb-4"
               defaultValue={getValues("content")}
             />
             <div className="text-red-600">
@@ -186,7 +194,7 @@ function AddEditPost({ post }) {
                   dataLoading ? "invisible " : "visible"
                 } inline-flex items-center`}
               >
-                {post ? "Update Blog" : "Add Blog"}
+                {blog ? "Update Blog" : "Add Blog"}
               </span>
               <BtnLoader
                 className={`${
@@ -202,4 +210,4 @@ function AddEditPost({ post }) {
   );
 }
 
-export default AddEditPost;
+export default AddEditBlog;

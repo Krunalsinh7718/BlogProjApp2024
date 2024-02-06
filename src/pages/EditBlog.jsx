@@ -1,35 +1,35 @@
 import { useParams } from "react-router-dom";
-import { AddEditPost, Container } from "../components";
+import { AddEditBlog, Container } from "../components";
 import { useEffect, useState } from "react";
 import otherservice from "../appwrite/OtherService";
 import PageLoader from "../components/PageLoader";
 
 
-function EditPost() {
+function EditBlog() {
     
     const param = useParams();
-    const [post,setPost] = useState(null);
+    const [blog,setBlog] = useState(null);
     const [dataLoading, setDataLoading] = useState(null);
     
     useEffect(() => {
 
-        otherservice.getPost(param.slug)
+        otherservice.getBlog(param.slug)
         .then(data =>{
             if(data){
-                // console.log("get post data", data);
-                setPost(data);
+                // console.log("get blog data", data);
+                setBlog(data);
             }
             setDataLoading(false);
         })
         .catch(error => {
             setDataLoading(false);
-            console.log(`get post :: Edit post ${param.slug}:: error`, error)
+            console.log(`get blog :: Edit blog ${param.slug}:: error`, error)
         })
     },[])
     return !dataLoading ? (<>
         <Container>
             {
-                post && <AddEditPost post={post}/>
+                blog && <AddEditBlog blog={blog}/>
             }
             
         </Container>
@@ -38,4 +38,4 @@ function EditPost() {
   );
 }
 
-export default EditPost;
+export default EditBlog;

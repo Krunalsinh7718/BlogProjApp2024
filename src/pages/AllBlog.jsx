@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import { Container, PostCard, DataLoader } from "../components";
+import { Container, BlogCard, DataLoader } from "../components";
 import { useSelector } from "react-redux";
 
 import otherservice from "../appwrite/OtherService";
 
-function AllPost() {
-  const [posts, setPosts] = useState([]);
-  const storePosts = useSelector((state) => state.db.blogs);
+function AllBlog() {
+  const [blogs, setBlogs] = useState([]);
+  const storeBlogs = useSelector((state) => state.db.blogs);
 
   useEffect(() => {
-    if (storePosts) {
-      setPosts(storePosts);
+    if (storeBlogs) {
+      setBlogs(storeBlogs);
     }
-  }, [storePosts]);
+  }, [storeBlogs]);
 
-  return posts && posts?.length !== 0 ? (
+  return blogs && blogs?.length !== 0 ? (
     <>
       <Container>
         <div className="flex gap-4 flex-wrap">
-          {posts.map((mapPost) => (
-            <PostCard {...mapPost} />
+          {blogs.map((mapBlog) => (
+            <BlogCard {...mapBlog} key={mapBlog.$id} />
           ))}
         </div>
       </Container>
@@ -28,11 +28,11 @@ function AllPost() {
     <Container>
       <div className="flex justify-center">
         <h2 className="p-5 text-center text-2xl font-semibold text-red-600">
-          No post found.
+          No blog found.
         </h2>
       </div>
     </Container>
   );
 }
 
-export default AllPost;
+export default AllBlog;

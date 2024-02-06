@@ -4,11 +4,11 @@ import App from "./App.jsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
-  AddPost,
-  AllPost,
-  EditPost,
+  AddBlog,
+  AllBlog,
+  EditBlog,
   Home,
-  Post,
+  Blog,
   SignIn,
   SignUp,
 } from "./pages/";
@@ -28,32 +28,32 @@ const routes = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/all-post",
+        path: "/all-blog",
         element: (
           <AuthLayout authentication>
-            <AllPost />
+            <AllBlog />
           </AuthLayout>
         ),
       },
       {
-        path: "/add-post",
+        path: "/add-blog",
         element: (
           <AuthLayout authentication>
-            <AddPost />
+            <AddBlog />
           </AuthLayout>
         ),
       },
       {
-        path: "/edit-post/:slug",
+        path: "/edit-blog/:slug",
         element: (
           <AuthLayout authentication>
-            <EditPost />
+            <EditBlog />
           </AuthLayout>
         ),
       },
       {
-        path: "/post/:slug",
-        element: <Post />
+        path: "/blog/:slug",
+        element: <Blog />
       },
       {
         path: "/signin",

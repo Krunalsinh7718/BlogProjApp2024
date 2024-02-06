@@ -16,7 +16,7 @@ const dbSlice = createSlice({
         addBlogs : (state, action) => {
             state.blogs = [...state.blogs, action.payload]
         },
-        updatePost : (state, action) => {
+        updateBlog : (state, action) => {
             state.blogs = state.blogs.map( blog => blog.$id === action.payload.$id ? action.payload : blog)
         },
         deleteBlog:  (state, action) => {
@@ -26,5 +26,5 @@ const dbSlice = createSlice({
     }
 })
 
-export const { addBlogs, setBlogs, deleteBlog, updatePost} = dbSlice.actions;
+export const { addBlogs, setBlogs, deleteBlog, updateBlog} = dbSlice.actions;
 export default dbSlice.reducer;
