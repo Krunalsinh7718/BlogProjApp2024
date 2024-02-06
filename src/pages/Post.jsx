@@ -52,7 +52,7 @@ function Post() {
   };
   return !dataLoading ? (
     <>
-      <div className="mx-auto  max-w-2xl px-3">
+      <div className="mx-auto  max-w-2xl px-3 pb-4">
         <h1 className="text-3xl font-bold capitalize mb-5">{post.title}</h1>
 
         <div className="rounded-lg bg-gray-200 p-4 mx-auto  max-w-2xl relative mb-4">
