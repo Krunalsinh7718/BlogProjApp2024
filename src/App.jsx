@@ -42,20 +42,20 @@ function App(props) {
         if (user) {
           dispatch(login(user));
           getBlogs();
+          setPageLoading(false);
         } else {
           dispatch(logout());
+          setPageLoading(false);
         }
       })
       .catch((error) => {
+        setPageLoading(false);
         console.log("error >> app >> currentUser", error);
       })
       .finally(() => console.log("main layout data fetch process done."));
   }, []);
 
-  useEffect(() => {
-    console.log("Props", props);
-    console.log("location", location);
-  }, [location]);
+ 
   return !pageLoading ? (
     <>
        { authStatus || location.pathname === "/" ? <Header /> : null}

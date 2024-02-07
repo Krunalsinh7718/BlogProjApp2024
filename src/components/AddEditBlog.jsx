@@ -43,7 +43,6 @@ function AddEditBlog({ blog }) {
   }
 
   const handleAddEditForm = async (data) => {
-    console.log(data);
     setDataLoading(true);
     if (blog) {
       try {
@@ -59,11 +58,12 @@ function AddEditBlog({ blog }) {
         }
 
         const updatedBlogData = await otherservice.updateBlog(blog.$id, data);
-        console.log("updateBlogStatus", updatedBlogData);
         if (updatedBlogData) {
           dispatch(updateBlog(updatedBlogData));
           toast.success("Blog updated successfully");
           navigate(`/blog/${updatedBlogData.$id}`);
+        }else{
+          toast.error("Something went wrong");
         }
         setDataLoading(false);
       } catch (error) {
@@ -156,7 +156,7 @@ function AddEditBlog({ blog }) {
               type="file"
               label="Article Image"
               accept="image/png, image/jpg, image/jpeg, image/gif"
-              {...register("image", { required: blog ? false : true })}
+              {...register("image", { required: blog ? false : "This is required" })}
             />
             <div className="text-red-600">
               <ErrorMessage errors={errors} name="image" />
