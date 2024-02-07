@@ -33,9 +33,7 @@ function App(props) {
       .finally(() => setPageLoading(false));
   };
 
-  useEffect(() => {
-    getBlogs();
-  }, []);
+ 
 
   useEffect(() => {
     service
@@ -43,6 +41,7 @@ function App(props) {
       .then((user) => {
         if (user) {
           dispatch(login(user));
+          getBlogs();
         } else {
           dispatch(logout());
         }

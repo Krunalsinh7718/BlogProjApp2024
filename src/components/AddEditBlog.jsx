@@ -39,10 +39,11 @@ function AddEditBlog({ blog }) {
   const getUniqueString = () => {
     const renNum = Math.floor(Math.random() * 2000);
     const timeStamp = Date.now();
-    return  data.slug + renNum + timeStamp;
+    return renNum + timeStamp;
   }
 
   const handleAddEditForm = async (data) => {
+    console.log(data);
     setDataLoading(true);
     if (blog) {
       try {
