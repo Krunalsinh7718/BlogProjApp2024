@@ -4,7 +4,7 @@ import LogoutButton from "./LogoutButton";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import Logo from "./Logo";
-import "../../assets/styles/header.css"
+import "./header.css"
 
 function Header() {
   const navigate = useNavigate();

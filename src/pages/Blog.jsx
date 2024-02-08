@@ -9,6 +9,7 @@ import PageLoader from "../components/PageLoader";
 import LazyImage from "../components/LazyImage";
 import BlogEditBtn from "../components/blog/BlogEditBtn";
 import BlogDeleteBtn from "../components/blog/BlogDeleteBtn";
+import BlogLikeBtn from "../components/blog/BlogLikeBtn";
 
 function Blog() {
   const [blog, setBlog] = useState(null);
@@ -82,6 +83,7 @@ function Blog() {
                 <BlogDeleteBtn onClick={handleDeleteBlog} />
               </div>
             )}
+            <BlogLikeBtn />
           </div>
         </div>
         <hr className="mb-4" />
